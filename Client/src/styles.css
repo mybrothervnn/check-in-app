@@ -1,0 +1,55 @@
+/* Global Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+}
+
+:root {
+  --primary-color: #d9534f;
+  --primary-dark: #c9302c;
+  --secondary-color: #f0ad4e;
+  --success-color: #5cb85c;
+  --info-color: #5bc0de;
+  --warning-color: #f0ad4e;
+  --danger-color: #d9534f;
+  --text-color: #333;
+  --text-light: #666;
+  --border-color: #ddd;
+  --bg-light: #f5f7fa;
+  --bg-white: #ffffff;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9534f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c9302c;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+}

@@ -1,0 +1,15 @@
+{
+  "name": "check-in-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo to run both Client and Server",
+  "scripts": {
+    "start": "concurrently -k -n CLIENT,SERVER -c cyan,magenta \"npm run start:client\" \"npm run start:server\"",
+    "start:client": "npm --prefix Client start",
+    "start:server": "npm --prefix Server start",
+    "install:all": "npm --prefix Client ci && npm --prefix Server ci"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

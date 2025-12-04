@@ -1,0 +1,59 @@
+<div class="dialog-overlay" *ngIf="isOpen()" (click)="close()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <!-- Reward Message -->
+    <div class="reward-message" *ngIf="showRewardMessage()">
+      <div class="reward-icon">🎉</div>
+      <div class="reward-text">{{ rewardMessage() }}</div>
+      <button class="btn btn-primary" (click)="closeRewardMessage()">
+        Sử dụng Voucher
+      </button>
+    </div>
+
+    <!-- Check-in Form -->
+    <div *ngIf="!showRewardMessage()">
+      <h2 class="dialog-title">Check-in</h2>
+
+      <!-- For returning customers -->
+      <div *ngIf="customerService.currentCustomer() && !isNewCustomer()">
+        <div class="greeting">
+          🎊 Chào mừng {{ customerService.currentCustomer()!.name }} trở lại!
+        </div>
+        <button class="btn btn-primary btn-large" (click)="onCheckIn()">
+          Nhấn để Check-in
+        </button>
+        <button class="btn btn-secondary" (click)="close()">
+          Đóng
+        </button>
+      </div>
+
+      <!-- For new customers -->
+      <div *ngIf="isNewCustomer()" class="form-group">
+        <label for="name">Tên khách hàng:</label>
+        <input
+          id="name"
+          type="text"
+          [(ngModel)]="customerName"
+          placeholder="Nhập tên của bạn"
+          class="input-field"
+        />
+
+        <label for="phone">6 số cuối số điện thoại:</label>
+        <input
+          id="phone"
+          type="tel"
+          [(ngModel)]="customerPhone"
+          placeholder="Nhập 6 số cuối"
+          maxlength="10"
+          class="input-field"
+        />
+
+        <button class="btn btn-primary btn-large" (click)="onCheckIn()">
+          Check-in
+        </button>
+        <button class="btn btn-secondary" (click)="close()">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

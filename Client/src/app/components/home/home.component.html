@@ -1,0 +1,102 @@
+<div class="home-container">
+  <!-- Header with Check-in Button -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="logo">🍲 Phở Hưng</h1>
+      <!-- nếu khách hàng đã tồn tại thì dùng class  checked-in, ngược lại thì dùng class check-in-btn-->
+      <button 
+        [ngClass]="customerService.currentCustomer() ? 'checked-in' : 'check-in-btn'"
+        (click)="openCheckInDialog()"
+      >
+        {{ customerService.currentCustomer() ? 'Cám ơn bạn đã Checkin' : 'Check-in Ngay' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <h2 class="welcome-title">Chào mừng bạn đến với Phở Hưng!</h2>
+      <p class="welcome-subtitle">
+        ✨ Check-in nhanh để tích lũy lượt ghé thăm và nhận quà bất ngờ! ✨
+      </p>
+    </div>
+  </section>
+  
+  <!-- Customer Info Section (if logged in) -->
+  <section *ngIf="customerService.currentCustomer()" class="customer-info">
+    <div class="info-card">
+      <h3>Thông tin khách hàng</h3>
+      <p>
+        <strong>Tên:</strong> {{ customerService.currentCustomer()!.name }}
+      </p>
+      <p>
+        <strong>Số lần ghé thăm:</strong>
+        <span class="visit-count">{{ customerService.visitCount() }}</span>
+      </p>
+      <p *ngIf="customerService.getNextMilestone()">
+        <strong>Còn lại để đạt mốc tiếp theo:</strong>
+        <span class="remaining-count"
+          >{{ customerService.getVisitsUntilNextMilestone() }} lần</span
+        >
+      </p>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="
+            (customerService.visitCount() /
+              (customerService.getNextMilestone() || 5)) *
+            100
+          "
+        ></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <a href="#rewards" class="action-card">
+      <span class="action-icon">🎁</span>
+      <span class="action-label">My Rewards</span>
+    </a>
+    <a href="#settings" class="action-card">
+      <span class="action-icon">⚙️</span>
+      <span class="action-label">Cấu hình</span>
+    </a>
+  </section>
+
+  <!-- Menu Section -->
+  <section class="menu-section">
+    <h3 class="section-title">Menu</h3>
+    <div class="menu-grid">
+      <div class="menu-item">
+        <div class="menu-icon">🍜</div>
+        <h4>Phở Bò</h4>
+        <p>Nước dùng đặc biệt, thơm ngon</p>
+        <span class="price">50.000đ</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍲</div>
+        <h4>Phở Gà</h4>
+        <p>Thơm và ngon tuyệt hảo</p>
+        <span class="price">45.000đ</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🥢</div>
+        <h4>Mì Lươn</h4>
+        <p>Lươn tươi, nước dùng đặc biệt</p>
+        <span class="price">55.000đ</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍚</div>
+        <h4>Cơm Chiên</h4>
+        <p>Cơm chiên ngon đặc biệt</p>
+        <span class="price">40.000đ</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Check-in Dialog -->
+  <app-check-in-dialog #checkInDialog></app-check-in-dialog>
+</div>
