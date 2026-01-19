@@ -41,14 +41,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.customerService.currentCustomer()) {
-      this.onCheckIn(
-        this.customerService.currentCustomer()!.name,
-        this.customerService.currentCustomer()!.phone
-      );
+      this.onCheckIn();
     }
   }
 
-  onCheckIn(customerName: string, customerPhone: string): void {
+  onCheckIn(): void {
     // Nếu là khách mới
     // if (this.checkInDialog.isNewCustomer()) {
     //   if (!customerName || !customerPhone) {
@@ -59,15 +56,24 @@ export class HomeComponent implements OnInit {
     // }
 
     // Thực hiện check-in
-    this.customerService.checkIn();
+    this.customerService.checkIn().subscribe((result) => {
+      // Cập nhật lại thông tin hiển thị
+      this.customerService.currentCustomer.set(result.customer);
+      this.customerService.visitCount.set(result.customer.visits);
+      console.log('HomeComponent - onCheckIn() - checked in customer:', result.customer);
+
+      //Cập nhật lại LocalStorage
+      this.customerService.updateLocalStorage();
+
+      // Kiểm tra xem có đạt mốc không
+      const milestoneReached = this.customerService.checkIfMilestoneReached();
+      if (milestoneReached) {
+        this.checkInDialog.rewardMessage.set(
+          `🎉 Chúc mừng bạn! Bạn vừa đạt mốc ${milestoneReached.visitMilestone} lần ghé thăm và nhận được Voucher ${milestoneReached.description}. Nhấn để sử dụng.`
+        );
+        this.checkInDialog.showRewardMessage.set(true);
+      }
+    });
     
-    // Kiểm tra xem có đạt mốc không
-    const milestoneReached = this.customerService.checkIfMilestoneReached();
-    // if (milestoneReached) {
-    //   this.checkInDialog.rewardMessage.set(
-    //     `🎉 Chúc mừng bạn! Bạn vừa đạt mốc ${milestoneReached.visitMilestone} lần ghé thăm và nhận được Voucher ${milestoneReached.description}. Nhấn để sử dụng.`
-    //   );
-    //   this.checkInDialog.showRewardMessage.set(true);
-    // }
   }
 }

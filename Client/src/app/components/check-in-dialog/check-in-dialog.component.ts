@@ -34,6 +34,34 @@ export class CheckInDialogComponent {
     this.isOpen.set(false);
   }
 
+  onRegis(): void {
+    if (!this.customerPhone()) {
+      alert('Vui lòng nhập số điện thoại');
+      return;
+    }
+    this.customerService.registerCustomer(
+      this.customerName(),
+      this.customerPhone()
+    ).subscribe( //res.status(201).json({ customer: customer, isNew: !customer });
+      (result) => {
+      console.log('CheckInDialogComponent - onRegis() - registered customer:', result.customer);
+      //Thực hiện cập nhật lại thông tin khách hàng trong service
+      this.customerService.currentCustomer.set(result.customer);
+
+      // Nếu visits > 1 => KHÁCH ĐÃ CHECK-IN
+      if (result.isNew === false) {
+        //Cập nhật lại thông tin hiển thị
+        this.customerService.visitCount.set(result.customer.visits);
+      }      
+
+      this.isNewCustomer.set(result.isNew);
+      
+      // Đóng dialog 
+      this.close();
+    });
+    // setTimeout(() => this.close(), 1500);    
+  }
+
   onCheckIn(): void {
     if (this.isNewCustomer()) {
       // Nếu là khách mới
@@ -45,24 +73,26 @@ export class CheckInDialogComponent {
         this.customerName(),
         this.customerPhone()
       );
+    } else { // KHÁCH CŨ
+      // Thực hiện check-in và cập nhật
+      this.customerService.checkIn();
+
+      // Kiểm tra xem có đạt mốc không
+      this.milestoneReached = this.customerService.checkIfMilestoneReached();
+      if (this.milestoneReached) {
+        this.rewardMessage.set(
+          `🎉 Chúc mừng bạn! Bạn vừa đạt mốc ${this.milestoneReached.visitMilestone} lần ghé thăm và nhận được Voucher ${this.milestoneReached.description}. Nhấn để sử dụng.`
+        );
+        this.showRewardMessage.set(true);
+      }
+    
+    
+    
     }
-
-    // Thực hiện check-in
-    this.customerService.checkIn();
-
-    // Kiểm tra xem có đạt mốc không
-    this.milestoneReached = this.customerService.checkIfMilestoneReached();
-    if (this.milestoneReached) {
-      this.rewardMessage.set(
-        `🎉 Chúc mừng bạn! Bạn vừa đạt mốc ${this.milestoneReached.visitMilestone} lần ghé thăm và nhận được Voucher ${this.milestoneReached.description}. Nhấn để sử dụng.`
-      );
-      this.showRewardMessage.set(true);
-    }
-
+    this.close();
     // Đóng dialog sau 2 giây nếu không có reward
-    if (!this.milestoneReached) {
-      setTimeout(() => this.close(), 1500);
-    }
+    // setTimeout(() => this.close(), 1500);
+    
   }
 
   closeRewardMessage(): void {

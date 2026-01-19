@@ -1,5 +1,7 @@
+
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, Subscription } from 'rxjs';
 
 export interface Customer {
   name: string;
@@ -44,65 +46,72 @@ export class CustomerService {
     }
   }
 
-  /*Lưu thông tin vào LocalStorage và DB
+  /*Lưu thông tin vào LocalStorage
   */
-  private saveCustomer(): void {
+  updateLocalStorage() {
     const customer = this.currentCustomer();
+    if (customer) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(customer));      
+    }
+  }
+  
+  /*Lưu thông tin vào DB
+  */
+  private saveCustomer(): Observable<any> {
+    const customer = this.currentCustomer();
+    //1. save to localstorage
     if (customer) {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(customer));
     }
     console.log('saveCustomer() - Customer saved:', customer);
-    this.saveCustomerToDB();
+    //2. save to DB
+    return this.saveCustomerToDB();
        
   }
-  
-  private saveCustomerToDB(): void {
-    // Giả sử chúng ta có một API endpoint để lưu khách hàng
+
+  private checkInToDB(): Observable<any> {
     const customer = this.currentCustomer();
-    if (customer) {
-      // Thực hiện gọi API ở đây (ví dụ sử dụng HttpClient)
-      console.log('saveCustomerToDB() - Simulating saving to DB:', customer);
-      //Gọi đến post('/:phone/checkin' ở url localhosst:3000/api/customers
+    return this.http.post(`http://localhost:3000/api/customers/:{phone}/checkin`, customer);
+  }
 
-      this.http.get(`https://literate-potato-jjvgp7jjv5rfpwpx-3000.app.github.dev/health`).subscribe(
-        (response) => console.log('Test API:', response),
-        (error) => console.error('Error when connect to DB:', error)
-      );
-
-
-      // this.http.post(`https://literate-potato-jjvgp7jjv5rfpwpx-3000.app.github.dev/api/customers/${customer.phone}/checkin`, customer).subscribe(
-      //   (response) => console.log('Customer saved to DB:', response),
-      //   (error) => console.error('Error saving to DB:', error)
-      // );
-
-      // Ví dụ:
-      // this.http.post('/api/customers', customer).subscribe(...);
-    }
+  private saveCustomerToDB(): Observable<any> {
+    const customer = this.currentCustomer();
+    return this.http.post(`http://localhost:3000/api/customers`, customer);
   }
 
   /*Đăng ký khách hàng mới với tên và số điện thoại (6 số cuối).
   */
-
-  registerCustomer(name: string, phone: string): void {
+  registerCustomer(name: string, phone: string): Observable<any> {
     const customer: Customer = {
       name,
-      phone: phone.slice(-6), // Lấy 6 số cuối
-      visits: 0,
+      phone: phone, // Lấy 6 số cuối
+      visits: 1,
       createdAt: new Date()
     };
     this.currentCustomer.set(customer);
-    this.visitCount.set(0);
-    this.saveCustomer();
+    // this.visitCount.set(1);
+    return this.saveCustomer();
   }
+
   /* Thực hiện check-in cho khách hàng hiện tại, tăng số lần ghé thăm lên 1 và lưu lại (Storage và DB).
   */
-  checkIn(): void {
+  checkIn(): Observable<any> {
     const customer = this.currentCustomer();
-    if (customer) {
+    if (!customer) {
+      throw new Error('No current customer to check in.');
+    } else {
       customer.visits++;
       this.visitCount.set(customer.visits);
-      this.saveCustomer();
+    } 
+
+    //1. save to localstorage
+    if (customer) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(customer));
     }
+    
+    console.log('saveCustomer() - Customer saved:', customer);
+    //2. save to DB
+    return this.checkInToDB();
   }
 
   getNextMilestone(): number | null {
@@ -141,4 +150,7 @@ export class CustomerService {
     this.visitCount.set(0);
     localStorage.removeItem(this.STORAGE_KEY);
   }
+
+  
+
 }

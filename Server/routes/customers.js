@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
 
   try {
     // Save phone last 6 digits as canonical
-    const canonicalPhone = phone.slice(-6);
+    // const canonicalPhone = phone.slice(-6);
+    const canonicalPhone = phone;
 
     // Check if exists
     let customer = await Customer.findOne({ phone: canonicalPhone });
@@ -44,7 +45,8 @@ router.post('/', async (req, res) => {
 
 // Get customer by phone (last 6 digits accepted)
 router.get('/:phone', async (req, res) => {
-  const phone = req.params.phone.slice(-6);
+  // const phone = req.params.phone.slice(-6);
+  const phone = req.params.phone;
   try {
     const customer = await Customer.findOne({ phone });
     if (!customer) return res.status(404).json({ error: 'Customer not found' });
@@ -57,7 +59,8 @@ router.get('/:phone', async (req, res) => {
 
 // Check-in (increment visits)
 router.post('/:phone/checkin', async (req, res) => {
-  const phone = req.params.phone.slice(-6);
+  // const phone = req.params.phone.slice(-6);
+  const phone = req.params.phone;
   console.log('Check-in request received',req);
   try {
     const customer = await Customer.findOne({ phone });
@@ -79,7 +82,8 @@ router.post('/:phone/checkin', async (req, res) => {
 
 // Return next milestone info
 router.get('/:phone/rewards', async (req, res) => {
-  const phone = req.params.phone.slice(-6);
+  // const phone = req.params.phone.slice(-6);
+  const phone = req.params.phone;
   try {
     const customer = await Customer.findOne({ phone });
     if (!customer) return res.status(404).json({ error: 'Customer not found' });

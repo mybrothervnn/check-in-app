@@ -28,7 +28,7 @@
 
       <!-- For new customers -->
       <div *ngIf="isNewCustomer()" class="form-group">
-        <label for="name">Tên khách hàng:</label>
+        <label for="name">Vui lòng cho chúng tôi biết tên bạn:</label>
         <input
           id="name"
           type="text"
@@ -37,19 +37,26 @@
           class="input-field"
         />
 
-        <label for="phone">6 số cuối số điện thoại:</label>
+        <label for="phone">Vui lòng cho chúng tôi biết SĐT: (ví dụ nhập: xxx3070044)</label>
         <input
           id="phone"
           type="tel"
           [(ngModel)]="customerPhone"
-          placeholder="Nhập 6 số cuối"
-          maxlength="10"
+          placeholder="Nhập số điện thoại của bạn"
+          maxlength="11"
           class="input-field"
         />
 
-        <button class="btn btn-primary btn-large" (click)="onCheckIn()">
+        <!-- New customer actions -->
+        <button *ngIf="isNewCustomer()" class="btn btn-primary btn-large" (click)="onRegis()">
+          Đăng ký
+        </button>
+
+        <!-- Old customer actions -->
+        <button *ngIf="!isNewCustomer()" class="btn btn-primary btn-large" (click)="onCheckIn()">
           Check-in
         </button>
+
         <button class="btn btn-secondary" (click)="close()">
           Đóng
         </button>
